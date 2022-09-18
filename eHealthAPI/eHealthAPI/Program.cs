@@ -1,4 +1,5 @@
 using eHealthAPI.Data;
+using eHealthAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,13 +7,19 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<eHealthDBContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"))
-    );
+builder.Services.AddDbContext<eHealthDBContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
+});
+
+//Kiru: Interface
+builder.Services.AddScoped<IMedicineRepository, MedicineRepository>();
+
+//Kiru: AutoMapper
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
 

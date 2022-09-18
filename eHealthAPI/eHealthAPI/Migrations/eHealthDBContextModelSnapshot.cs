@@ -22,6 +22,38 @@ namespace eHealthAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("eHealthAPI.Models.Domain.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Discount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MedicineName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPrice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitPrice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Carts");
+                });
+
             modelBuilder.Entity("eHealthAPI.Models.Domain.Medicine", b =>
                 {
                     b.Property<int>("Id")
@@ -37,7 +69,7 @@ namespace eHealthAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ExpiryDate")
+                    b.Property<DateTime>("ExpDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ImageUrl")
@@ -48,12 +80,9 @@ namespace eHealthAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("MedicineName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -61,6 +90,9 @@ namespace eHealthAPI.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UnitPrice")
+                        .HasColumnType("int");
 
                     b.Property<string>("Uses")
                         .IsRequired()
@@ -71,7 +103,7 @@ namespace eHealthAPI.Migrations
                     b.ToTable("Medicines");
                 });
 
-            modelBuilder.Entity("eHealthAPI.Models.Domain.User", b =>
+            modelBuilder.Entity("eHealthAPI.Models.Domain.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,8 +111,62 @@ namespace eHealthAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Account")
+                    b.Property<int>("OrderNumber")
                         .HasColumnType("int");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderTotal")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("eHealthAPI.Models.Domain.Order_Item", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Discount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MedicineName")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPrice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitPrice")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Order_Items");
+                });
+
+            modelBuilder.Entity("eHealthAPI.Models.Domain.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
                         .IsRequired()

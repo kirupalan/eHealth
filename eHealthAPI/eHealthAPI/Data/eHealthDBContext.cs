@@ -13,6 +13,9 @@ namespace eHealthAPI.Data
 
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Order_Item> Order_Items { get; set; }
 
     }
 }
