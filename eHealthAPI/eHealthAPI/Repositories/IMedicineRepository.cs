@@ -4,6 +4,10 @@ namespace eHealthAPI.Repositories
 {
     public interface IMedicineRepository
     {
-        IEnumerable<Medicine> GetAll();
+        // Synchronous
+        // IEnumerable<Medicine> GetAll(); 
+
+        // Asynchronous
+        Task<IEnumerable<Medicine>> GetAllAsync();
     }
 }

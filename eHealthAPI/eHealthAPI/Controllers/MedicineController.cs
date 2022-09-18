@@ -24,9 +24,12 @@ namespace eHealthAPI.Controllers
         
 
         [HttpGet]
-        public IActionResult GetAllMedicines()
+        //public IActionResult GetAllMedicines()
+        public async Task<IActionResult> GetAllMedicines()
         {
-            var medicines = medicineRepository.GetAll();
+            var medicines = await medicineRepository.GetAllAsync();
+
+            //var medicines = medicineRepository.GetAll();
 
             //return DTO medicines
 
