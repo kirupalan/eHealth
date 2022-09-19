@@ -45,43 +45,43 @@ namespace eHealthAPI.Repositories
         //Asynchronous: Delete Medicine by Id
         public async Task<Medicine> DeleteAsync(int Id)
         {
-            var medicne = await neHealthDBContext.Medicines.FirstOrDefaultAsync(x => x.Id == Id);
+            var medicine = await neHealthDBContext.Medicines.FirstOrDefaultAsync(x => x.Id == Id);
 
-            if (medicne == null)
+            if (medicine == null)
             {
                 return null;
             }
 
             //Delete Medicine
-            neHealthDBContext.Medicines.Remove(medicne);
+            neHealthDBContext.Medicines.Remove(medicine);
             await neHealthDBContext.SaveChangesAsync();
-            return medicne;
+            return medicine;
         }
 
         //Asynchronous: Delete Medicine by Id
         public async Task<Medicine> UpdateAsync(int Id, Medicine medicine)
         {
-            var existingMedicne = await neHealthDBContext.Medicines.FirstOrDefaultAsync(x => x.Id == Id);
+            var existingMedicinee = await neHealthDBContext.Medicines.FirstOrDefaultAsync(x => x.Id == Id);
 
-            if (existingMedicne == null)
+            if (existingMedicinee == null)
             {
                 return null;
             }
 
-            existingMedicne.MedicineName = medicine.MedicineName;
-            existingMedicne.Manufacturer = medicine.Manufacturer;
-            existingMedicne.UnitPrice = medicine.UnitPrice;
-            existingMedicne.Discount = medicine.Discount;
-            existingMedicne.Quantity = medicine.Quantity;
-            existingMedicne.Disease = medicine.Disease;
-            existingMedicne.Uses = medicine.Uses;
-            existingMedicne.ExpDate = medicine.ExpDate;
-            existingMedicne.ImageUrl = medicine.ImageUrl;
-            existingMedicne.Status = medicine.Status;
+            existingMedicinee.MedicineName = medicine.MedicineName;
+            existingMedicinee.Manufacturer = medicine.Manufacturer;
+            existingMedicinee.UnitPrice = medicine.UnitPrice;
+            existingMedicinee.Discount = medicine.Discount;
+            existingMedicinee.Quantity = medicine.Quantity;
+            existingMedicinee.Disease = medicine.Disease;
+            existingMedicinee.Uses = medicine.Uses;
+            existingMedicinee.ExpDate = medicine.ExpDate;
+            existingMedicinee.ImageUrl = medicine.ImageUrl;
+            existingMedicinee.Status = medicine.Status;
 
             await neHealthDBContext.SaveChangesAsync();
 
-            return existingMedicne;
+            return existingMedicinee;
         }
     }
 }

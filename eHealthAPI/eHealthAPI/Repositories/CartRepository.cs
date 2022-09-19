@@ -37,39 +37,39 @@ namespace eHealthAPI.Repositories
         //Asynchronous: Delete Cart by Id
         public async Task<Cart> DeleteAsync(int Id)
         {
-            var medicne = await neHealthDBContext.Carts.FirstOrDefaultAsync(x => x.Id == Id);
+            var cart = await neHealthDBContext.Carts.FirstOrDefaultAsync(x => x.Id == Id);
 
-            if (medicne == null)
+            if (cart == null)
             {
                 return null;
             }
 
             //Delete Cart
-            neHealthDBContext.Carts.Remove(medicne);
+            neHealthDBContext.Carts.Remove(cart);
             await neHealthDBContext.SaveChangesAsync();
-            return medicne;
+            return cart;
         }
 
         //Asynchronous: Delete Cart by Id
         public async Task<Cart> UpdateAsync(int Id, Cart cart)
         {
-            var existingMedicne = await neHealthDBContext.Carts.FirstOrDefaultAsync(x => x.Id == Id);
+            var existingCarte = await neHealthDBContext.Carts.FirstOrDefaultAsync(x => x.Id == Id);
 
-            if (existingMedicne == null)
+            if (existingCarte == null)
             {
                 return null;
             }
 
-            existingMedicne.UserId = cart.UserId;
-            existingMedicne.MedicineName = cart.MedicineName;
-            existingMedicne.UnitPrice = cart.UnitPrice;
-            existingMedicne.Discount = cart.Discount;
-            existingMedicne.Quantity = cart.Quantity;
-            existingMedicne.TotalPrice = cart.TotalPrice;
+            existingCarte.UserId = cart.UserId;
+            existingCarte.MedicineName = cart.MedicineName;
+            existingCarte.UnitPrice = cart.UnitPrice;
+            existingCarte.Discount = cart.Discount;
+            existingCarte.Quantity = cart.Quantity;
+            existingCarte.TotalPrice = cart.TotalPrice;
 
             await neHealthDBContext.SaveChangesAsync();
 
-            return existingMedicne;
+            return existingCarte;
         }
     }
 }

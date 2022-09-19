@@ -37,37 +37,37 @@ namespace eHealthAPI.Repositories
         //Asynchronous: Delete Order by Id
         public async Task<Order> DeleteAsync(int Id)
         {
-            var medicne = await neHealthDBContext.Orders.FirstOrDefaultAsync(x => x.Id == Id);
+            var order = await neHealthDBContext.Orders.FirstOrDefaultAsync(x => x.Id == Id);
 
-            if (medicne == null)
+            if (order == null)
             {
                 return null;
             }
 
             //Delete Order
-            neHealthDBContext.Orders.Remove(medicne);
+            neHealthDBContext.Orders.Remove(order);
             await neHealthDBContext.SaveChangesAsync();
-            return medicne;
+            return order;
         }
 
         //Asynchronous: Delete Order by Id
         public async Task<Order> UpdateAsync(int Id, Order order)
         {
-            var existingMedicne = await neHealthDBContext.Orders.FirstOrDefaultAsync(x => x.Id == Id);
+            var existingOrder = await neHealthDBContext.Orders.FirstOrDefaultAsync(x => x.Id == Id);
 
-            if (existingMedicne == null)
+            if (existingOrder == null)
             {
                 return null;
             }
 
-            existingMedicne.UserId = order.UserId;
-            existingMedicne.OrderNumber = order.OrderNumber;
-            existingMedicne.OrderTotal = order.OrderTotal;
-            existingMedicne.OrderStatus = order.OrderStatus;
+            existingOrder.UserId = order.UserId;
+            existingOrder.OrderNumber = order.OrderNumber;
+            existingOrder.OrderTotal = order.OrderTotal;
+            existingOrder.OrderStatus = order.OrderStatus;
 
             await neHealthDBContext.SaveChangesAsync();
 
-            return existingMedicne;
+            return existingOrder;
         }
     }
 }
