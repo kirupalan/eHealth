@@ -2,11 +2,11 @@
 
 namespace eHealthAPI.Profiles
 {
-    public class MedicinesProfile : Profile
+    public class UsersProfile : Profile
     {
-        public MedicinesProfile()
+        public UsersProfile()
         {
-            CreateMap<Models.Domain.Medicine, Models.DTO.Medicine>()
+            CreateMap<Models.Domain.User, Models.DTO.User>()
                 //.ForMember(dest => dest.Id, options => options.MapFrom(src => src.Id)
                 .ReverseMap();
         }
