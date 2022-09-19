@@ -1,10 +1,10 @@
-﻿namespace eHealthAPI.Models.Domain
+﻿namespace eHealthAPI.Models.DTO
 {
-    public class Order_Item
+    public class Cart
     {
         public int Id { get; set; }
-        public int OrderId { get; set; }
-        public int MedicineName { get; set; }
+        public int UserId { get; set; }
+        public string MedicineName { get; set; }
         public int UnitPrice { get; set; }
         public int Discount { get; set; }
         public int Quantity { get; set; }
