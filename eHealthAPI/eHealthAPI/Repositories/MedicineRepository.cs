@@ -83,5 +83,19 @@ namespace eHealthAPI.Repositories
 
             return existingMedicinee;
         }
+
+        public async Task<bool> UpdateProfileImageAsync(int Id, string profileImageUrl)
+        {
+            var medicine = await GetAsync(Id);
+
+            if(medicine != null)
+            {
+                medicine.ImageUrl = profileImageUrl;
+                await neHealthDBContext.SaveChangesAsync();
+                return true;
+
+            }
+            return false;
+        }
     }
 }

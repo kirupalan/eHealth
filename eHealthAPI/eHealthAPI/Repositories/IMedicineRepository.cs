@@ -20,5 +20,8 @@ namespace eHealthAPI.Repositories
 
         // Kiru: Update Medicine
         Task<Medicine> UpdateAsync(int Id, Medicine medicine);
+
+        // Kiru: Update Image
+        Task<bool> UpdateProfileImageAsync(int Id, string profileImageUrl);
     }
 }

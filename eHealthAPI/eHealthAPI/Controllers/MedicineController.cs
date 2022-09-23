@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using eHealthAPI.Models.Domain;
 using eHealthAPI.Repositories;
+using Microsoft.AspNetCore.Http;
 
-using Microsoft.AspNetCore.Mvc;
+
 using eHealthAPI.Models.DTO;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -15,9 +16,10 @@ namespace eHealthAPI.Controllers
     {
         private readonly IMedicineRepository medicineRepository;
         private readonly IMapper mapper;
+        private readonly IImageRepository imageRepository;
 
         //public MedicineController(IMedicineRepository medicineRepository)
-        public MedicineController(IMedicineRepository medicineRepository, IMapper mapper)
+        public MedicineController(IMedicineRepository medicineRepository, IMapper mapper, IImageRepository imageRepository)
         {
             this.medicineRepository = medicineRepository;
             this.mapper = mapper;
@@ -207,5 +209,27 @@ namespace eHealthAPI.Controllers
 
         }
 
+        [HttpPost]
+        [Route("{Id:int}/upload-image")]
+        // Kiru: Upload Image
+        public async Task<IActionResult> UploadImage([FromRoute] int Id, IFormFile profileImage)
+        {
+            //Upload the image to local storage
+
+            //var fileName = Guid.NewGuid() + Path.GetExtension(profileImage.FileName);
+
+            var fileName =  Path.GetFileName(profileImage.FileName);
+
+            var fileImagePath = await imageRepository.Upload(profileImage, fileName);
+
+            if(await medicineRepository.UpdateProfileImageAsync(Id, fileImagePath))
+            {
+                return Ok(fileImagePath);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error Uploading Image");
+            }
+        }
     }
 }
