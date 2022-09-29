@@ -4,13 +4,11 @@ namespace eHealthAPI.Repositories
 {
     public interface IMedicineRepository
     {
-        // Synchronous
-        // IEnumerable<Medicine> GetAll(); 
+        // Kiru: Get Medicine by Id
+        Task<Medicine> GetAsync(int Id);
 
-        // Asynchronous
+        // Kiru: Get All Medicines
         Task<IEnumerable<Medicine>> GetAllAsync();
-
-        Task<Medicine>GetAsync(int Id);
 
         // Kiru: Insert new Medicine
         Task<Medicine> AddAsync(Medicine medicine);

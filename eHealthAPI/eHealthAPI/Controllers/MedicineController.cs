@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using eHealthAPI.Models.Domain;
 using eHealthAPI.Repositories;
-using Microsoft.AspNetCore.Http;
-
-
-using eHealthAPI.Models.DTO;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Microsoft.AspNetCore.Authorization;
+using static StackExchange.Redis.Role;
 
 namespace eHealthAPI.Controllers
 {
@@ -14,54 +10,23 @@ namespace eHealthAPI.Controllers
     [Route("[controller]")]
     public class MedicineController : Controller
     {
-        private readonly IMedicineRepository medicineRepository;
-        private readonly IMapper mapper;
-        private readonly IImageRepository imageRepository;
+        private readonly IMedicineRepository _repo;
+        private readonly IMapper _mapper;
+        private readonly IImageRepository _imgRepo;
 
-        //public MedicineController(IMedicineRepository medicineRepository)
-        public MedicineController(IMedicineRepository medicineRepository, IMapper mapper, IImageRepository imageRepository)
+        public MedicineController(IMedicineRepository repo, IMapper mapper, IImageRepository imgRepo)
         {
-            this.medicineRepository = medicineRepository;
-            this.mapper = mapper;
+            _repo = repo;
+            _mapper = mapper;
+            _imgRepo = imgRepo;
         }
-
 
         // Kiru: Get All Medicines
         [HttpGet]
-        //public IActionResult GetAllMedicines()
         public async Task<IActionResult> GetAllMedicinesAsync()
         {
-            var medicines = await medicineRepository.GetAllAsync();
-
-            //var medicines = medicineRepository.GetAll();
-
-            //return DTO medicines
-
-            /*
-            var medicinesDTO = new List<Models.DTO.Medicine>();
-
-            medicines.ToList().ForEach(medicine =>
-            {
-                var medicineDTO = new Models.DTO.Medicine()
-                {
-                    Id = medicine.Id,
-                    MedicineName = medicine.MedicineName,
-                    Manufacturer = medicine.Manufacturer,
-                    UnitPrice = medicine.UnitPrice,
-                    Discount = medicine.Discount,
-                    Quantity = medicine.Quantity,
-                    Disease = medicine.Disease,
-                    Uses = medicine.Uses,
-                    ExpDate = medicine.ExpDate,
-                    ImageUrl = medicine.ImageUrl,
-                    Status = medicine.Status
-                };
-
-                medicinesDTO.Add(medicineDTO);
-
-            });
-            */
-            var medicinesDTO = mapper.Map<List<Models.DTO.Medicine>>(medicines);
+            var medicines = await _repo.GetAllAsync();
+            var medicinesDTO = _mapper.Map<List<Models.DTO.Medicine>>(medicines);
             return Ok(medicinesDTO);
         }
 
@@ -71,19 +36,20 @@ namespace eHealthAPI.Controllers
         [ActionName("GetMedicineAsync")]
         public async Task<IActionResult> GetMedicineAsync(int Id)
         {
-            var medicine = await medicineRepository.GetAsync(Id);
+            var medicine = await _repo.GetAsync(Id);
 
             if (medicine == null)
             {
                 return NotFound();
             }
 
-            var medicinesDTO = mapper.Map<Models.DTO.Medicine>(medicine);
+            var medicinesDTO = _mapper.Map<Models.DTO.Medicine>(medicine);
             return Ok(medicinesDTO);
         }
 
         // Kiru: Add Medicine
         [HttpPost]
+        //[Authorize]
         public async Task<IActionResult> AddMedicineAsync(Models.DTO.AddMedicineRequest addMedicineRequest)
         {
             // Request(DTO) to Domain Model
@@ -103,7 +69,7 @@ namespace eHealthAPI.Controllers
 
 
             //Pass details to repository
-            medicine =  await medicineRepository.AddAsync(medicine);
+            medicine =  await _repo.AddAsync(medicine);
 
             //Comnvert the data back to DTO
             var medicineDTO = new Models.Domain.Medicine
@@ -127,10 +93,11 @@ namespace eHealthAPI.Controllers
         // Kiru: Delete Medicine
         [HttpDelete]
         [Route("{Id:int}")]
+        //[Authorize]
         public async Task<IActionResult> DeleteMedicineAsync(int Id)
         {
             //Get Medicine
-            var medicine = await medicineRepository.DeleteAsync(Id);
+            var medicine = await _repo.DeleteAsync(Id);
 
             //If null NotFound
             if (medicine == null)
@@ -161,6 +128,7 @@ namespace eHealthAPI.Controllers
         // Kiru: Update Medicine
         [HttpPut]
         [Route("{Id:int}")]
+        //[Authorize]
         public async Task<IActionResult> UpdateMedicineAsync([FromRoute] int Id, [FromBody] Models.DTO.UpdateMedicineRequest updateMedicineRequest)
         {
             // Request(DTO) to Domain Model
@@ -179,7 +147,7 @@ namespace eHealthAPI.Controllers
             };
 
             //Pass details to repository
-            medicine = await medicineRepository.UpdateAsync(Id, medicine);
+            medicine = await _repo.UpdateAsync(Id, medicine);
 
             //If null NotFound
             if (medicine == null)
@@ -209,20 +177,16 @@ namespace eHealthAPI.Controllers
 
         }
 
+        // Kiru: Upload Image
         [HttpPost]
         [Route("{Id:int}/upload-image")]
-        // Kiru: Upload Image
+        //[Authorize]
         public async Task<IActionResult> UploadImage([FromRoute] int Id, IFormFile profileImage)
         {
-            //Upload the image to local storage
+            var fileName = Guid.NewGuid() + Path.GetExtension(profileImage.FileName);
+            var fileImagePath = await _imgRepo.Upload(profileImage, fileName);
 
-            //var fileName = Guid.NewGuid() + Path.GetExtension(profileImage.FileName);
-
-            var fileName =  Path.GetFileName(profileImage.FileName);
-
-            var fileImagePath = await imageRepository.Upload(profileImage, fileName);
-
-            if(await medicineRepository.UpdateProfileImageAsync(Id, fileImagePath))
+            if(await _repo.UpdateProfileImageAsync(Id, fileImagePath))
             {
                 return Ok(fileImagePath);
             }

@@ -1,51 +1,43 @@
 ﻿using eHealthAPI.Data;
 using eHealthAPI.Models.Domain;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+//using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace eHealthAPI.Repositories
 {
     public class MedicineRepository : IMedicineRepository
     {
-        private readonly eHealthDBContext neHealthDBContext;
-        public MedicineRepository(eHealthDBContext eHealthDBContext)
+        //DB Context
+        private readonly eHealthDBContext _context;
+        public MedicineRepository(eHealthDBContext context)
         {
-            this.neHealthDBContext = eHealthDBContext;
-        }
-
-        //Synchronous: Get All Medicines
-        /*
-        public IEnumerable<Medicine> GetAll()
-        {
-            return neHealthDBContext.Medicines.ToList();
-        }
-        */
-
-        //Asynchronous: Get All Medicines
-        public async Task<IEnumerable<Medicine>> GetAllAsync()
-        {
-            return await neHealthDBContext.Medicines.ToListAsync();
+            _context = context;
         }
 
         //Asynchronous: Get Medicine by id
         public async Task<Medicine> GetAsync(int Id)
         {
-            var medicine = await neHealthDBContext.Medicines.FirstOrDefaultAsync(x => x.Id == Id);
-            return medicine;
+            return await _context.Medicines.FindAsync(Id);
+        }
+
+        //Asynchronous: Get All Medicines
+        public async Task<IEnumerable<Medicine>> GetAllAsync()
+        {
+            return await _context.Medicines.ToListAsync();
         }
 
         //Asynchronous: Add Medicine
         public async Task<Medicine> AddAsync(Medicine medicine)
         {
-            await neHealthDBContext.AddAsync(medicine);
-            await neHealthDBContext.SaveChangesAsync();
+            await _context.AddAsync(medicine);
+            await _context.SaveChangesAsync();
             return medicine;
         }
 
         //Asynchronous: Delete Medicine by Id
         public async Task<Medicine> DeleteAsync(int Id)
         {
-            var medicine = await neHealthDBContext.Medicines.FirstOrDefaultAsync(x => x.Id == Id);
+            var medicine = await _context.Medicines.FirstOrDefaultAsync(x => x.Id == Id);
 
             if (medicine == null)
             {
@@ -53,15 +45,15 @@ namespace eHealthAPI.Repositories
             }
 
             //Delete Medicine
-            neHealthDBContext.Medicines.Remove(medicine);
-            await neHealthDBContext.SaveChangesAsync();
+            _context.Medicines.Remove(medicine);
+            await _context.SaveChangesAsync();
             return medicine;
         }
 
         //Asynchronous: Delete Medicine by Id
         public async Task<Medicine> UpdateAsync(int Id, Medicine medicine)
         {
-            var existingMedicinee = await neHealthDBContext.Medicines.FirstOrDefaultAsync(x => x.Id == Id);
+            var existingMedicinee = await _context.Medicines.FirstOrDefaultAsync(x => x.Id == Id);
 
             if (existingMedicinee == null)
             {
@@ -79,11 +71,12 @@ namespace eHealthAPI.Repositories
             existingMedicinee.ImageUrl = medicine.ImageUrl;
             existingMedicinee.Status = medicine.Status;
 
-            await neHealthDBContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return existingMedicinee;
         }
 
+        //Kiru: Upload Image
         public async Task<bool> UpdateProfileImageAsync(int Id, string profileImageUrl)
         {
             var medicine = await GetAsync(Id);
@@ -91,7 +84,7 @@ namespace eHealthAPI.Repositories
             if(medicine != null)
             {
                 medicine.ImageUrl = profileImageUrl;
-                await neHealthDBContext.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return true;
 
             }

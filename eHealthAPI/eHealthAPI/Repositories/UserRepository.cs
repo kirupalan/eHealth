@@ -6,37 +6,51 @@ namespace eHealthAPI.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly eHealthDBContext neHealthDBContext;
-        public UserRepository(eHealthDBContext eHealthDBContext)
+        private readonly eHealthDBContext _context;
+        public UserRepository(eHealthDBContext context)
         {
-            this.neHealthDBContext = eHealthDBContext;
+            _context = context;
         }
 
-        //Asynchronous: Get All Users
+        //Kiru: Authenticate
+        public async Task<User> AuthenticateAsync(string email, string password)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower() && x.Password == password);
+            if (user == null)
+            {
+                return null;
+            }
+            user.Password = null;
+            return user;
+
+        }
+
+        //Kiru: Get All Users
         public async Task<IEnumerable<User>> GetAllAsync()
         {
-            return await neHealthDBContext.Users.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
 
         //Asynchronous: Get User by id
         public async Task<User> GetAsync(int Id)
         {
-            var user = await neHealthDBContext.Users.FirstOrDefaultAsync(x => x.Id == Id);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == Id);
             return user;
         }
 
         //Asynchronous: Add User
         public async Task<User> AddAsync(User user)
         {
-            await neHealthDBContext.AddAsync(user);
-            await neHealthDBContext.SaveChangesAsync();
+            await _context.AddAsync(user);
+            await _context.SaveChangesAsync();
             return user;
         }
 
         //Asynchronous: Delete User by Id
         public async Task<User> DeleteAsync(int Id)
         {
-            var user = await neHealthDBContext.Users.FirstOrDefaultAsync(x => x.Id == Id);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == Id);
 
             if (user == null)
             {
@@ -44,15 +58,15 @@ namespace eHealthAPI.Repositories
             }
 
             //Delete User
-            neHealthDBContext.Users.Remove(user);
-            await neHealthDBContext.SaveChangesAsync();
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
             return user;
         }
 
         //Asynchronous: Delete User by Id
         public async Task<User> UpdateAsync(int Id, User user)
         {
-            var existingUser = await neHealthDBContext.Users.FirstOrDefaultAsync(x => x.Id == Id);
+            var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == Id);
 
             if (existingUser == null)
             {
@@ -70,9 +84,12 @@ namespace eHealthAPI.Repositories
             existingUser.Type = user.Type;
             existingUser.Status = user.Status;
 
-            await neHealthDBContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return existingUser;
         }
+
+
     }
+
 }

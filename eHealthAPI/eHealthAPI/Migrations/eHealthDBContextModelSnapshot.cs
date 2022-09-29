@@ -129,7 +129,7 @@ namespace eHealthAPI.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("eHealthAPI.Models.Domain.Order_Item", b =>
+            modelBuilder.Entity("eHealthAPI.Models.Domain.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -140,8 +140,9 @@ namespace eHealthAPI.Migrations
                     b.Property<int>("Discount")
                         .HasColumnType("int");
 
-                    b.Property<int>("MedicineName")
-                        .HasColumnType("int");
+                    b.Property<string>("MedicineName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");

@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using eHealthAPI.Models.Domain;
 using eHealthAPI.Repositories;
-
-using Microsoft.AspNetCore.Mvc;
-using eHealthAPI.Models.DTO;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace eHealthAPI.Controllers
 {
@@ -13,23 +8,22 @@ namespace eHealthAPI.Controllers
     [Route("[controller]")]
     public class UserController : Controller
     {
-        private readonly IUserRepository userRepository;
-        private readonly IMapper mapper;
+        private readonly IUserRepository _repo;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserRepository userRepository, IMapper user)
+        public UserController(IUserRepository repo, IMapper mapper)
         {
-            this.userRepository = userRepository;
-            this.mapper = mapper;
+            _repo = repo;
+            _mapper = mapper;
         }
-
 
         // Kiru: Get All Users
         [HttpGet]
         public async Task<IActionResult> GetAllUsersAsync()
         {
-            var users = await userRepository.GetAllAsync();
-            var usersDTO = mapper.Map<List<Models.DTO.User>>(users);
-            return Ok(users);
+            var users = await _repo.GetAllAsync();
+            var usersDTO = _mapper.Map<List<Models.DTO.User>>(users);
+            return Ok(usersDTO);
         }
 
         // Kiru: Get User by id
@@ -38,14 +32,14 @@ namespace eHealthAPI.Controllers
         [ActionName("GetUserAsync")]
         public async Task<IActionResult> GetUserAsync(int Id)
         {
-            var user = await userRepository.GetAsync(Id);
+            var user = await _repo.GetAsync(Id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            var usersDTO = mapper.Map<Models.DTO.User>(user);
+            var usersDTO = _mapper.Map<Models.DTO.User>(user);
             return Ok(usersDTO);
         }
 
@@ -70,7 +64,7 @@ namespace eHealthAPI.Controllers
 
 
             //Pass details to repository
-            user =  await userRepository.AddAsync(user);
+            user =  await _repo.AddAsync(user);
 
             //Comnvert the data back to DTO
             var userDTO = new Models.Domain.User
@@ -97,7 +91,7 @@ namespace eHealthAPI.Controllers
         public async Task<IActionResult> DeleteUserAsync(int Id)
         {
             //Get User
-            var user = await userRepository.DeleteAsync(Id);
+            var user = await _repo.DeleteAsync(Id);
 
             //If null NotFound
             if (user == null)
@@ -146,7 +140,7 @@ namespace eHealthAPI.Controllers
             };
 
             //Pass details to repository
-            user = await userRepository.UpdateAsync(Id, user);
+            user = await _repo.UpdateAsync(Id, user);
 
             //If null NotFound
             if (user == null)

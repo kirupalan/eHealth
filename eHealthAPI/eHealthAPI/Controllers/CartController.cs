@@ -1,32 +1,28 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using eHealthAPI.Models.Domain;
 using eHealthAPI.Repositories;
-using eHealthAPI.Models.DTO;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace eHealthAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CartController : Controller
+    public class CartController : ControllerBase
     {
-        private readonly ICartRepository cartRepository;
-        private readonly IMapper mapper;
+        private readonly ICartRepository _repo;
+        private readonly IMapper _mapper;
 
-        public CartController(ICartRepository cartRepository, IMapper cart)
+        public CartController(ICartRepository repo, IMapper mapper)
         {
-            this.cartRepository = cartRepository;
-            this.mapper = mapper;
+            _repo = repo;
+            _mapper = mapper;
         }
-
 
         // Kiru: Get All Carts
         [HttpGet]
         public async Task<IActionResult> GetAllCartsAsync()
         {
-            var carts = await cartRepository.GetAllAsync();
-            var cartsDTO = mapper.Map<List<Models.DTO.Cart>>(carts);
+            var carts = await _repo.GetAllAsync();
+            //var cartsDTO = _mapper.Map<List<Models.DTO.Cart>>(carts);
             return Ok(carts);
         }
 
@@ -34,22 +30,22 @@ namespace eHealthAPI.Controllers
         [HttpGet]
         [Route("{Id:int}")]
         [ActionName("GetCartAsync")]
-        public async Task<IActionResult> GetCartAsync(int Id)
+        public async Task<ActionResult> GetCartAsync(int Id)
         {
-            var cart = await cartRepository.GetAsync(Id);
+            var cart = await _repo.GetAsync(Id);
 
             if (cart == null)
             {
                 return NotFound();
             }
 
-            var cartsDTO = mapper.Map<Models.DTO.Cart>(cart);
-            return Ok(cartsDTO);
+            //var cartsDTO = _mapper.Map<Models.DTO.Cart>(cart);
+            return Ok(cart);
         }
 
         // Kiru: Add Cart
         [HttpPost]
-        public async Task<IActionResult> AddCartAsync(Models.DTO.AddCartRequest addCartRequest)
+        public async Task<ActionResult> AddCartAsync(Models.DTO.AddCartRequest addCartRequest)
         {
             // Request(DTO) to Domain Model
             var cart = new Models.Domain.Cart()
@@ -64,7 +60,7 @@ namespace eHealthAPI.Controllers
 
 
             //Pass details to repository
-            cart = await cartRepository.AddAsync(cart);
+            cart = await _repo.AddAsync(cart);
 
             //Comnvert the data back to DTO
             var cartDTO = new Models.Domain.Cart
@@ -87,7 +83,7 @@ namespace eHealthAPI.Controllers
         public async Task<IActionResult> DeleteCartAsync(int Id)
         {
             //Get Cart
-            var cart = await cartRepository.DeleteAsync(Id);
+            var cart = await _repo.DeleteAsync(Id);
 
             //If null NotFound
             if (cart == null)
@@ -128,7 +124,7 @@ namespace eHealthAPI.Controllers
             };
 
             //Pass details to repository
-            cart = await cartRepository.UpdateAsync(Id, cart);
+            cart = await _repo.UpdateAsync(Id, cart);
 
             //If null NotFound
             if (cart == null)

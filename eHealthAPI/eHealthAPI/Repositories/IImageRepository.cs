@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
-
-namespace eHealthAPI.Repositories
+﻿namespace eHealthAPI.Repositories
 {
     public interface IImageRepository
     {

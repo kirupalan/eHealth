@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using eHealthAPI.Models.Domain;
 using eHealthAPI.Repositories;
-
-using Microsoft.AspNetCore.Mvc;
-using eHealthAPI.Models.DTO;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace eHealthAPI.Controllers
 {
@@ -13,22 +8,21 @@ namespace eHealthAPI.Controllers
     [Route("[controller]")]
     public class OrderItemController : Controller
     {
-        private readonly IOrderItemRepository orderitemRepository;
-        private readonly IMapper mapper;
+        private readonly IOrderItemRepository _repo;
+        private readonly IMapper _mapper;
 
-        //public OrderItemController(IOrderItemRepository orderitemRepository)
-        public OrderItemController(IOrderItemRepository orderitemRepository, IMapper mapper)
+        public OrderItemController(IOrderItemRepository repo, IMapper mapper)
         {
-            this.orderitemRepository = orderitemRepository;
-            this.mapper = mapper;
+            _repo = repo;
+            _mapper = mapper;
         }
 
         // Kiru: Get All OrderItems
         [HttpGet]
         public async Task<IActionResult> GetAllOrderItemsAsync()
         {
-            var orderitems = await orderitemRepository.GetAllAsync();
-            var orderitemsDTO = mapper.Map<List<Models.DTO.OrderItem>>(orderitems);
+            var orderitems = await _repo.GetAllAsync();
+            var orderitemsDTO = _mapper.Map<List<Models.DTO.OrderItem>>(orderitems);
             return Ok(orderitemsDTO);
         }
 
@@ -38,14 +32,14 @@ namespace eHealthAPI.Controllers
         [ActionName("GetOrderItemAsync")]
         public async Task<IActionResult> GetOrderItemAsync(int Id)
         {
-            var orderitem = await orderitemRepository.GetAsync(Id);
+            var orderitem = await _repo.GetAsync(Id);
 
             if (orderitem == null)
             {
                 return NotFound();
             }
 
-            var orderitemsDTO = mapper.Map<Models.DTO.OrderItem>(orderitem);
+            var orderitemsDTO = _mapper.Map<Models.DTO.OrderItem>(orderitem);
             return Ok(orderitemsDTO);
         }
 
@@ -66,7 +60,7 @@ namespace eHealthAPI.Controllers
 
 
             //Pass details to repository
-            orderitem = await orderitemRepository.AddAsync(orderitem);
+            orderitem = await _repo.AddAsync(orderitem);
 
             //Comnvert the data back to DTO
             var orderitemDTO = new Models.Domain.OrderItem
@@ -89,7 +83,7 @@ namespace eHealthAPI.Controllers
         public async Task<IActionResult> DeleteOrderItemAsync(int Id)
         {
             //Get OrderItem
-            var orderitem = await orderitemRepository.DeleteAsync(Id);
+            var orderitem = await _repo.DeleteAsync(Id);
 
             //If null NotFound
             if (orderitem == null)
@@ -130,7 +124,7 @@ namespace eHealthAPI.Controllers
             };
 
             //Pass details to repository
-            orderitem = await orderitemRepository.UpdateAsync(Id, orderitem);
+            orderitem = await _repo.UpdateAsync(Id, orderitem);
 
             //If null NotFound
             if (orderitem == null)

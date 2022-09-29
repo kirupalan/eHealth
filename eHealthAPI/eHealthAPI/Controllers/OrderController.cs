@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using eHealthAPI.Models.Domain;
 using eHealthAPI.Repositories;
-
-using Microsoft.AspNetCore.Mvc;
-using eHealthAPI.Models.DTO;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace eHealthAPI.Controllers
 {
@@ -13,14 +8,14 @@ namespace eHealthAPI.Controllers
     [Route("[controller]")]
     public class OrderController : Controller
     {
-        private readonly IOrderRepository orderRepository;
-        private readonly IMapper mapper;
+        private readonly IOrderRepository _repo;
+        private readonly IMapper _mapper;
 
         //public OrderController(IOrderRepository orderRepository)
-        public OrderController(IOrderRepository orderRepository, IMapper mapper)
+        public OrderController(IOrderRepository repo, IMapper mapper)
         {
-            this.orderRepository = orderRepository;
-            this.mapper = mapper;
+            _repo = repo;
+            _mapper = mapper;
         }
 
 
@@ -29,8 +24,8 @@ namespace eHealthAPI.Controllers
         //public IActionResult GetAllOrders()
         public async Task<IActionResult> GetAllOrdersAsync()
         {
-            var orders = await orderRepository.GetAllAsync();
-            var ordersDTO = mapper.Map<List<Models.DTO.Order>>(orders);
+            var orders = await _repo.GetAllAsync();
+            var ordersDTO = _mapper.Map<List<Models.DTO.Order>>(orders);
             return Ok(ordersDTO);
         }
 
@@ -40,14 +35,14 @@ namespace eHealthAPI.Controllers
         [ActionName("GetOrderAsync")]
         public async Task<IActionResult> GetOrderAsync(int Id)
         {
-            var order = await orderRepository.GetAsync(Id);
+            var order = await _repo.GetAsync(Id);
 
             if (order == null)
             {
                 return NotFound();
             }
 
-            var ordersDTO = mapper.Map<Models.DTO.Order>(order);
+            var ordersDTO = _mapper.Map<Models.DTO.Order>(order);
             return Ok(ordersDTO);
         }
 
@@ -66,7 +61,7 @@ namespace eHealthAPI.Controllers
 
 
             //Pass details to repository
-            order = await orderRepository.AddAsync(order);
+            order = await _repo.AddAsync(order);
 
             //Comnvert the data back to DTO
             var orderDTO = new Models.Domain.Order
@@ -87,7 +82,7 @@ namespace eHealthAPI.Controllers
         public async Task<IActionResult> DeleteOrderAsync(int Id)
         {
             //Get Order
-            var order = await orderRepository.DeleteAsync(Id);
+            var order = await _repo.DeleteAsync(Id);
 
             //If null NotFound
             if (order == null)
@@ -124,7 +119,7 @@ namespace eHealthAPI.Controllers
             };
 
             //Pass details to repository
-            order = await orderRepository.UpdateAsync(Id, order);
+            order = await _repo.UpdateAsync(Id, order);
 
             //If null NotFound
             if (order == null)

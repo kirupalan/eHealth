@@ -4,9 +4,12 @@ namespace eHealthAPI.Repositories
 {
     public interface IUserRepository
     {
-        // Asynchronous
+        Task<User> AuthenticateAsync(string email, string password);
+
+        // Kiru: all users
         Task<IEnumerable<User>> GetAllAsync();
 
+        // Kiru: single user
         Task<User> GetAsync(int Id);
 
         // Kiru: Insert new User
