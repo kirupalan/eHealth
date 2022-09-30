@@ -13,12 +13,22 @@ namespace eHealthAPI.Controllers
         private readonly IMedicineRepository _repo;
         private readonly IMapper _mapper;
         private readonly IImageRepository _imgRepo;
+        private MedicineController datastore;
 
         public MedicineController(IMedicineRepository repo, IMapper mapper, IImageRepository imgRepo)
         {
             _repo = repo;
             _mapper = mapper;
             _imgRepo = imgRepo;
+        }
+
+        public MedicineController()
+        {
+        }
+
+        public MedicineController(MedicineController datastore)
+        {
+            this.datastore = datastore;
         }
 
         // Kiru: Get All Medicines
